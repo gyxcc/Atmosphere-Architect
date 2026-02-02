@@ -1,0 +1,279 @@
+/* ========================================
+   模塊 0: 引導教程樣式
+   ======================================== */
+
+#onboarding-screen {
+    background: var(--bg-primary);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 背景粒子畫布 */
+#particle-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.3;
+}
+
+/* 主容器 */
+.onboarding-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    z-index: 10;
+}
+
+/* 終端機窗口 */
+.terminal-window {
+    width: 600px;
+    max-width: 90vw;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 
+        0 0 50px rgba(0, 0, 0, 0.5),
+        inset 0 0 100px rgba(0, 255, 255, 0.02);
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 15px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.terminal-header .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.terminal-header .dot.red { background: #ff5f56; }
+.terminal-header .dot.yellow { background: #ffbd2e; }
+.terminal-header .dot.green { background: #27ca40; }
+
+.terminal-title {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.terminal-body {
+    padding: 30px;
+    min-height: 200px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--cyan);
+}
+
+/* 打字機效果 */
+.typewriter {
+    display: inline;
+}
+
+.typewriter .line {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.typewriter .line.complete {
+    color: var(--text-secondary);
+}
+
+.typewriter .line.current {
+    color: var(--cyan);
+}
+
+.typewriter .highlight {
+    color: var(--orange);
+    font-weight: bold;
+}
+
+.typewriter .warning {
+    color: var(--yellow);
+}
+
+.typewriter .success {
+    color: var(--green);
+}
+
+/* 閃爍光標 */
+.cursor {
+    display: inline-block;
+    color: var(--cyan);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* 啟動按鈕 */
+.ignite-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px 50px;
+    background: transparent;
+    border: 2px solid var(--orange);
+    border-radius: 4px;
+    color: var(--orange);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.ignite-button.visible {
+    opacity: 1;
+    transform: translateY(0);
+    animation: pulse-border 2s infinite;
+}
+
+.ignite-button.hidden {
+    display: none;
+}
+
+.ignite-button:hover {
+    background: rgba(255, 107, 53, 0.1);
+    box-shadow: var(--glow-orange);
+    transform: scale(1.05);
+}
+
+.ignite-button:active {
+    transform: scale(0.98);
+}
+
+.btn-icon {
+    font-size: 28px;
+    animation: pulse 2s infinite;
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 107, 53, 0.3),
+        transparent
+    );
+    animation: sweep 3s infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% { 
+        border-color: var(--orange);
+        box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+    }
+    50% { 
+        border-color: var(--yellow);
+        box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+    }
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 啟動動畫 */
+.ignite-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+}
+
+.sun-burst {
+    width: 10px;
+    height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: sun-expand 2s ease-out forwards;
+}
+
+@keyframes sun-expand {
+    0% {
+        width: 10px;
+        height: 10px;
+        opacity: 1;
+        box-shadow: 0 0 50px var(--orange);
+    }
+    50% {
+        width: 100px;
+        height: 100px;
+        opacity: 1;
+        box-shadow: 0 0 200px var(--yellow);
+    }
+    100% {
+        width: 3000px;
+        height: 3000px;
+        opacity: 0;
+        box-shadow: 0 0 500px var(--yellow);
+    }
+}
+
+/* 掃描線效果 */
+.terminal-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0.1;
+    animation: scan-line 4s linear infinite;
+}
+
+/* 進度條 */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border-radius: 2px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--cyan);
+}
