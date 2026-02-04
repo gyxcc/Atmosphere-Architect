@@ -1,0 +1,386 @@
+/* ========================================
+   模塊 1: 全球氣候實驗室樣式
+   ======================================== */
+
+#global-lab-screen {
+    display: none;
+    flex-direction: row;
+    background: var(--bg-primary);
+    padding-top: 60px; /* 導航欄高度 */
+    height: 100vh;
+    width: 100%;
+}
+
+#global-lab-screen.active {
+    display: flex;
+}
+
+/* ========================================
+   左側: Canvas 視覺區域
+   ======================================== */
+.globe-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: calc(100vh - 60px);
+    padding: 20px;
+}
+
+#globe-canvas {
+    background: radial-gradient(ellipse at center, #0a0a1a 0%, #000000 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    display: block;
+    max-width: 100%;
+    max-height: calc(100vh - 120px);
+    min-width: 500px;
+    min-height: 500px;
+}
+
+/* 圖例 */
+.globe-legend {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+.legend-title {
+    color: var(--cyan);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-color.equator { background: var(--yellow); }
+.legend-color.tropic { background: var(--orange); }
+.legend-color.arctic { background: var(--cyan); }
+.legend-color.wind-warm { background: #ff6b35; }
+.legend-color.wind-cold { background: #00aaff; }
+
+/* 風向指示器 */
+.wind-indicator {
+    position: absolute;    #global-lab-screen
+    top: 30px;
+    left: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.wind-indicator-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.circulation-status {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.circulation-status.active {
+    color: var(--green);
+}
+
+.circulation-status.partial {
+    color: var(--yellow);
+}
+
+.circulation-status.inactive {
+    color: var(--red);
+}
+
+/* ========================================
+   右側: 控制面板
+   ======================================== */
+.control-panel {
+    width: 350px;
+    background: var(--bg-secondary);
+    border-left: 1px solid var(--border-color);
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(100vh - 60px);
+}
+
+.panel-header {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.panel-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title::before {
+    content: '▸';
+    color: var(--cyan);
+}
+
+/* 滑桿特殊樣式 */
+.slider-container {
+    margin-bottom: 15px;
+}
+
+.slider-container.solar input[type="range"]::-webkit-slider-thumb {
+    background: var(--orange);
+    box-shadow: var(--glow-orange);
+}
+
+.slider-container.solar .slider-value {
+    color: var(--orange);
+}
+
+.slider-container.rotation input[type="range"]::-webkit-slider-thumb {
+    background: var(--cyan);
+    box-shadow: var(--glow-cyan);
+}
+
+/* 數據顯示卡片 */
+.data-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.data-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.data-card-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.data-card-value {
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+}
+
+.data-card-value.hot {
+    color: var(--orange);
+    text-shadow: var(--glow-orange);
+}
+
+.data-card-value.cold {
+    color: #00aaff;
+    text-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+}
+
+.data-card-unit {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-left: 5px;
+}
+
+.data-card-bar {
+    height: 4px;
+    background: var(--bg-primary);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.data-card-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    transition: width 0.5s ease;
+}
+
+.data-card-bar-fill.heat {
+    background: linear-gradient(90deg, var(--yellow), var(--orange), var(--red));
+}
+
+/* 說明面板 */
+.info-panel {
+    background: rgba(0, 255, 255, 0.05);
+    border: 1px solid var(--cyan-dim);
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.info-panel-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-panel-title::before {
+    content: 'ℹ';
+}
+
+.info-panel-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.info-panel-text strong {
+    color: var(--orange);
+}
+
+/* 氣壓指示器 */
+.pressure-indicators {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+.pressure-zone {
+    text-align: center;
+}
+
+.pressure-zone-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.pressure-zone-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pressure-zone-value.high {
+    color: #00aaff;
+}
+
+.pressure-zone-value.low {
+    color: var(--orange);
+}
+
+.pressure-arrow {
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.pressure-arrow.up {
+    color: var(--orange);
+}
+
+.pressure-arrow.down {
+    color: #00aaff;
+}
+
+/* 環流狀態顯示 */
+.circulation-display {
+    margin-top: 15px;
+}
+
+.circulation-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.circulation-cell.active {
+    border-left-color: var(--green);
+    background: rgba(51, 255, 136, 0.05);
+}
+
+.circulation-cell-name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.circulation-cell-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--bg-primary);
+}
+
+.circulation-cell-status.on {
+    color: var(--green);
+    background: rgba(51, 255, 136, 0.1);
+}
+
+.circulation-cell-status.off {
+    color: var(--text-dim);
+}
+
+/* 動畫 */
+@keyframes data-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.data-updating {
+    animation: data-pulse 0.5s ease;
+}

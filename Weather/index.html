@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmosphere Architect | 大氣架構師</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+    <link rel="stylesheet" href="css/global-lab.css">
+    <link rel="stylesheet" href="css/regional.css">
+    <link rel="stylesheet" href="css/disaster.css">
+</head>
+<body>
+    <!-- 模塊 0: 引導教程 -->
+    <div id="onboarding-screen" class="screen active">
+        <div class="onboarding-container">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                    <span class="terminal-title">ATMOSPHERE_SYSTEM_v1.0</span>
+                </div>
+                <div class="terminal-body">
+                    <div id="typewriter-text" class="typewriter"></div>
+                    <span id="cursor" class="cursor">_</span>
+                </div>
+            </div>
+            
+            <button id="ignite-btn" class="ignite-button hidden">
+                <span class="btn-icon">☀</span>
+                <span class="btn-text">啟動太陽 IGNITE SUN</span>
+                <span class="btn-glow"></span>
+            </button>
+        </div>
+        
+        <!-- 背景粒子效果 -->
+        <canvas id="particle-bg"></canvas>
+    </div>
+
+    <!-- 模塊 1: 全球氣候實驗室 -->
+    <div id="global-lab-screen" class="screen">
+        <!-- 左側: 地球可視化 -->
+        <div class="globe-container">
+            <canvas id="globe-canvas"></canvas>
+            
+            <!-- 圖例 -->
+            <div class="globe-legend">
+                <div class="legend-title">圖例 Legend</div>
+                <div class="legend-item">
+                    <span class="legend-color equator"></span>
+                    <span>赤道 Equator</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color tropic"></span>
+                    <span>回歸線 Tropics</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color arctic"></span>
+                    <span>極圈 Polar Circles</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color wind-warm"></span>
+                    <span>暖氣流 Warm Air</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color wind-cold"></span>
+                    <span>冷氣流 Cold Air</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右側: 控制面板 -->
+        <div class="control-panel">
+            <div class="panel-header">全球氣候控制台</div>
+            
+            <!-- 能量輸入控制 -->
+            <div class="panel-section">
+                <div class="section-title">能量輸入 Energy Input</div>
+                
+                <div class="slider-container solar">
+                    <div class="slider-label">
+                        <span>☀ 太陽輻射強度</span>
+                        <span class="slider-value" id="solar-value">100%</span>
+                    </div>
+                    <input type="range" id="solar-radiation" min="0" max="150" value="100" step="5">
+                </div>
+                
+                <div class="slider-container rotation">
+                    <div class="slider-label">
+                        <span>🌐 地球自轉速度</span>
+                        <span class="slider-value" id="rotation-value">50</span>
+                    </div>
+                    <input type="range" id="rotation-speed" min="0" max="100" value="50" step="5">
+                </div>
+            </div>
+            
+            <!-- 實時數據 -->
+            <div class="panel-section">
+                <div class="section-title">實時監測 Real-time Data</div>
+                
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <span class="data-card-title">全球平均氣溫</span>
+                    </div>
+                    <div>
+                        <span class="data-card-value" id="global-temp-value">15.0</span>
+                        <span class="data-card-unit">°C</span>
+                    </div>
+                    <div class="data-card-bar">
+                        <div class="data-card-bar-fill heat" id="temp-bar-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+                
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <span class="data-card-title">大氣環流穩定度</span>
+                    </div>
+                    <div>
+                        <span class="data-card-value" id="stability-value">50</span>
+                        <span class="data-card-unit">%</span>
+                    </div>
+                    <div class="data-card-bar">
+                        <div class="data-card-bar-fill" id="stability-bar-fill" style="width: 50%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 氣壓分佈 -->
+            <div class="panel-section">
+                <div class="section-title">氣壓分佈 Pressure Zones</div>
+                <div class="pressure-indicators">
+                    <div class="pressure-zone">
+                        <div class="pressure-zone-label">極地</div>
+                        <div class="pressure-zone-value high" id="polar-pressure">高</div>
+                        <div class="pressure-arrow down">↓</div>
+                    </div>
+                    <div class="pressure-zone">
+                        <div class="pressure-zone-label">赤道</div>
+                        <div class="pressure-zone-value low" id="equator-pressure">低</div>
+                        <div class="pressure-arrow up">↑</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 環流狀態 -->
+            <div class="panel-section">
+                <div class="section-title">三圈環流狀態</div>
+                <div class="circulation-display">
+                    <div class="circulation-cell" id="hadley-cell">
+                        <span class="circulation-cell-name">哈德里環流 (0°-30°)</span>
+                        <span class="circulation-cell-status off">INACTIVE</span>
+                    </div>
+                    <div class="circulation-cell" id="ferrel-cell">
+                        <span class="circulation-cell-name">費雷爾環流 (30°-60°)</span>
+                        <span class="circulation-cell-status off">INACTIVE</span>
+                    </div>
+                    <div class="circulation-cell" id="polar-cell">
+                        <span class="circulation-cell-name">極地環流 (60°-90°)</span>
+                        <span class="circulation-cell-status off">INACTIVE</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 科學說明 -->
+            <div class="info-panel">
+                <div class="info-panel-title">科學原理</div>
+                <div class="info-panel-text">
+                    <strong>太陽輻射</strong>加熱赤道，形成<strong>低氣壓</strong>（空氣上升）；
+                    極地冷卻形成<strong>高氣壓</strong>（空氣下沉）。
+                    氣壓差驅動風從高壓吹向低壓。
+                    <br><br>
+                    <strong>地球自轉</strong>產生科氏力，使風向發生偏轉，
+                    形成東北信風、西風帶等穩定環流。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模塊 2: 中國季風系統 -->
+    <div id="regional-screen" class="screen">
+        <!-- 左側: 地圖可視化 -->
+        <div class="map-container">
+            <canvas id="regional-canvas"></canvas>
+            
+            <!-- 月份顯示 -->
+            <div class="month-display">
+                <div class="month-label">當前月份</div>
+                <div class="month-value" id="month-value">1月</div>
+                <div class="season-tag winter" id="season-tag">冬季 Winter</div>
+            </div>
+            
+            <!-- 風向指示器 -->
+            <div class="wind-direction-display">
+                <div class="wind-indicator-title">風向</div>
+                <div class="wind-compass">
+                    <div class="compass-labels">
+                        <span class="n">N</span>
+                        <span class="s">S</span>
+                        <span class="e">E</span>
+                        <span class="w">W</span>
+                    </div>
+                    <div class="wind-arrow nw dry" id="wind-arrow"></div>
+                </div>
+                <div class="wind-type monsoon-winter" id="wind-type">西北季風 (乾燥)</div>
+            </div>
+            
+            <!-- 懸浮提示 -->
+            <div class="hover-tooltip" id="map-tooltip"></div>
+            
+            <!-- 地圖圖例 -->
+            <div class="map-legend">
+                <div class="map-legend-title">圖例 Legend</div>
+                <div class="map-legend-item">
+                    <span class="legend-box ocean"></span>
+                    <span>太平洋 Pacific Ocean</span>
+                </div>
+                <div class="map-legend-item">
+                    <span class="legend-box land"></span>
+                    <span>歐亞大陸 Eurasia</span>
+                </div>
+                <div class="map-legend-item">
+                    <span class="legend-box plateau"></span>
+                    <span>青藏高原 Tibetan Plateau</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右側: 控制面板 -->
+        <div class="regional-control-panel">
+            <div class="panel-header">區域季風控制台</div>
+            
+            <!-- 月份選擇 -->
+            <div class="panel-section">
+                <div class="section-title">時間控制 Time Control</div>
+                <div class="month-slider-container">
+                    <div class="slider-label">
+                        <span>📅 選擇月份</span>
+                        <span class="slider-value" id="month-slider-value">1月</span>
+                    </div>
+                    <input type="range" id="month-slider" min="1" max="12" value="1" step="1">
+                    <div class="month-slider-track">
+                        <span class="month-tick active">1</span>
+                        <span class="month-tick">2</span>
+                        <span class="month-tick">3</span>
+                        <span class="month-tick">4</span>
+                        <span class="month-tick">5</span>
+                        <span class="month-tick">6</span>
+                        <span class="month-tick">7</span>
+                        <span class="month-tick">8</span>
+                        <span class="month-tick">9</span>
+                        <span class="month-tick">10</span>
+                        <span class="month-tick">11</span>
+                        <span class="month-tick">12</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 溫度對比 -->
+            <div class="panel-section">
+                <div class="section-title">溫度對比 Temperature</div>
+                <div class="temp-comparison">
+                    <div class="temp-card land">
+                        <div class="temp-card-label">🏔 陸地</div>
+                        <div>
+                            <span class="temp-card-value cold" id="land-temp-value">-10.0</span>
+                            <span class="temp-card-unit">°C</span>
+                        </div>
+                    </div>
+                    <div class="temp-card sea">
+                        <div class="temp-card-label">🌊 海洋</div>
+                        <div>
+                            <span class="temp-card-value cool" id="sea-temp-value">15.0</span>
+                            <span class="temp-card-unit">°C</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 氣壓對比 -->
+            <div class="panel-section">
+                <div class="section-title">氣壓分佈 Pressure</div>
+                <div class="pressure-comparison">
+                    <div class="pressure-indicator">
+                        <div class="pressure-indicator-label">陸地</div>
+                        <div class="pressure-indicator-value high" id="land-pressure">高壓</div>
+                    </div>
+                    <div class="pressure-arrow-flow" id="pressure-arrow">→</div>
+                    <div class="pressure-indicator">
+                        <div class="pressure-indicator-label">海洋</div>
+                        <div class="pressure-indicator-value low" id="sea-pressure">低壓</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 青藏高原開關 -->
+            <div class="panel-section">
+                <div class="section-title">地形因素 Terrain</div>
+                <div class="plateau-toggle-container">
+                    <div class="plateau-toggle-header">
+                        <span class="plateau-toggle-label">🏔 青藏高原</span>
+                        <div class="toggle-switch active" id="plateau-toggle"></div>
+                    </div>
+                    <div class="plateau-effect active" id="plateau-effect">
+                        青藏高原阻擋西南季風，使其抬升並在迎風坡產生降水。長江流域雨量增加。
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 濕度顯示 -->
+            <div class="panel-section">
+                <div class="section-title">空氣濕度 Humidity</div>
+                <div class="humidity-display">
+                    <div class="slider-label">
+                        <span>💧 相對濕度</span>
+                        <span class="slider-value" id="humidity-value">30%</span>
+                    </div>
+                    <div class="humidity-bar">
+                        <div class="humidity-fill" id="humidity-fill" style="width: 30%"></div>
+                    </div>
+                    <div class="humidity-labels">
+                        <span>乾燥</span>
+                        <span>濕潤</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 科學說明 -->
+            <div class="info-panel">
+                <div class="info-panel-title">季風原理</div>
+                <div class="info-panel-text">
+                    <strong>海陸熱力差異</strong>：陸地比熱容小，升溫快降溫也快；海洋比熱容大，溫度穩定。
+                    <br><br>
+                    <strong>冬季</strong>：陸地冷→高壓，風從陸地吹向海洋（西北風，乾燥）
+                    <br>
+                    <strong>夏季</strong>：陸地熱→低壓，風從海洋吹向陸地（東南風，濕潤）
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模塊 3: 災害應對工程 -->
+    <div id="disaster-screen" class="screen">
+        <!-- 左側: 地圖和工具 -->
+        <div class="disaster-map-container">
+            <!-- 警報橫幅 -->
+            <div class="alert-banner" id="alert-banner">
+                <span class="alert-icon">⚠️</span>
+                <div class="alert-text">
+                    <div class="alert-title">乾旱預警</div>
+                    <div class="alert-desc">土壤濕度嚴重不足，農作物面臨枯死風險</div>
+                </div>
+                <div class="alert-value" id="alert-moisture-value">20%</div>
+            </div>
+            
+            <!-- 地圖 Canvas -->
+            <canvas id="disaster-canvas"></canvas>
+            
+            <!-- 工具箱 -->
+            <div class="toolbox">
+                <div class="tool-item" draggable="true" data-tool="water-transfer">
+                    <span class="tool-icon">🚰</span>
+                    <span class="tool-name">南水北調</span>
+                    <span class="tool-cost">$40M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="groundwater">
+                    <span class="tool-icon">🕳️</span>
+                    <span class="tool-name">地下水井</span>
+                    <span class="tool-cost">$10M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="cloud-seeding">
+                    <span class="tool-icon">🚀</span>
+                    <span class="tool-name">人工增雨</span>
+                    <span class="tool-cost">$5M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="drought-crops">
+                    <span class="tool-icon">🌾</span>
+                    <span class="tool-name">抗旱作物</span>
+                    <span class="tool-cost">$20M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="drip-irrigation">
+                    <span class="tool-icon">💧</span>
+                    <span class="tool-name">節水灌溉</span>
+                    <span class="tool-cost">$25M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="reforestation">
+                    <span class="tool-icon">🌲</span>
+                    <span class="tool-name">退耕還林</span>
+                    <span class="tool-cost">$30M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="reservoir">
+                    <span class="tool-icon">🌊</span>
+                    <span class="tool-name">水庫蓄水</span>
+                    <span class="tool-cost">$50M</span>
+                </div>
+                <div class="tool-item" draggable="true" data-tool="crop-rotation">
+                    <span class="tool-icon">🌱</span>
+                    <span class="tool-name">輪作休耕</span>
+                    <span class="tool-cost">$15M</span>
+                </div>
+            </div>
+            
+            <!-- 拖放提示 -->
+            <div class="drop-zone-hint">拖放工具到地圖上部署</div>
+        </div>
+        
+        <!-- 右側: 控制面板 -->
+        <div class="disaster-control-panel">
+            <div class="panel-header">災害應對控制台</div>
+            
+            <!-- 資源卡片 -->
+            <div class="resource-cards">
+                <div class="resource-card budget">
+                    <span class="resource-icon">💰</span>
+                    <div class="resource-info">
+                        <div class="resource-label">剩餘預算</div>
+                        <div>
+                            <span class="resource-value" id="budget-value">100</span>
+                            <span class="resource-unit">M$</span>
+                        </div>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-bar-fill budget" id="budget-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <div class="resource-card moisture">
+                    <span class="resource-icon">💧</span>
+                    <div class="resource-info">
+                        <div class="resource-label">土壤濕度</div>
+                        <div>
+                            <span class="resource-value danger" id="moisture-value">20</span>
+                            <span class="resource-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-bar-fill moisture" id="moisture-bar" style="width: 20%"></div>
+                    </div>
+                </div>
+                
+                <div class="resource-card eco">
+                    <span class="resource-icon">🌿</span>
+                    <div class="resource-info">
+                        <div class="resource-label">環境健康度</div>
+                        <div>
+                            <span class="resource-value success" id="eco-value">100</span>
+                            <span class="resource-unit">/100</span>
+                        </div>
+                    </div>
+                    <div class="resource-bar">
+                        <div class="resource-bar-fill eco" id="eco-bar" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 目標面板 -->
+            <div class="objective-panel">
+                <div class="objective-title">任務目標</div>
+                <div class="objective-item">
+                    <span class="objective-check incomplete" id="obj-moisture-check"></span>
+                    <span class="objective-text" id="obj-moisture-text">土壤濕度 ≥ 60%</span>
+                </div>
+                <div class="objective-item">
+                    <span class="objective-check complete" id="obj-budget-check">✓</span>
+                    <span class="objective-text complete" id="obj-budget-text">預算不為負</span>
+                </div>
+                <div class="objective-item">
+                    <span class="objective-check complete" id="obj-eco-check">✓</span>
+                    <span class="objective-text complete" id="obj-eco-text">環境健康度 ≥ 50</span>
+                </div>
+            </div>
+            
+            <!-- 已部署工具 -->
+            <div class="deployed-list">
+                <div class="deployed-title">已部署工具</div>
+                <div id="deployed-list-items">
+                    <div class="deployed-empty">尚未部署任何工具</div>
+                </div>
+            </div>
+            
+            <!-- 科學說明 -->
+            <div class="info-panel">
+                <div class="info-panel-title">工程權衡</div>
+                <div class="info-panel-text">
+                    <strong>南水北調</strong>：成本高但穩定可靠<br>
+                    <strong>地下水井</strong>：便宜但破壞環境<br>
+                    <strong>人工增雨</strong>：需要足夠濕度才有效<br>
+                    <strong>抗旱作物</strong>：改變需求而非供給
+                </div>
+            </div>
+            
+            <!-- 提交區域 -->
+            <div class="submit-section">
+                <button class="submit-btn" id="submit-plan">提交方案 SUBMIT</button>
+                <button class="submit-btn" id="reset-plan" style="margin-top: 10px; background: var(--bg-tertiary); color: var(--text-secondary);">重置 RESET</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 結果彈窗 -->
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-grade">S</div>
+            <div class="result-message">評級 S：完美的氣候工程師！</div>
+            <div class="result-stats">
+                <div class="result-stat">
+                    <div class="result-stat-label">濕度</div>
+                    <div class="result-stat-value" id="result-moisture">60%</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-label">預算</div>
+                    <div class="result-stat-value" id="result-budget">$30M</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-label">環境</div>
+                    <div class="result-stat-value" id="result-eco">85</div>
+                </div>
+            </div>
+            <button class="result-btn" onclick="hideResultModal()">繼續 CONTINUE</button>
+        </div>
+    </div>
+
+    <!-- 導航欄 (啟動後顯示) -->
+    <nav id="main-nav" class="hidden">
+        <div class="nav-brand">ATMOSPHERE ARCHITECT</div>
+        <div class="nav-links">
+            <button class="nav-btn active" data-target="global-lab-screen">全球實驗室</button>
+            <button class="nav-btn" data-target="regional-screen">區域季風</button>
+            <button class="nav-btn" data-target="disaster-screen">災害工程</button>
+        </div>
+    </nav>
+
+    <script src="js/state.js"></script>
+    <script src="js/onboarding.js"></script>
+    <script src="js/global-lab.js"></script>
+    <script src="js/regional.js"></script>
+    <script src="js/disaster.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
