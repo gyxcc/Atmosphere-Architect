@@ -361,6 +361,92 @@ input[type="range"]::-webkit-slider-thumb:hover {
     color: var(--cyan);
     text-transform: uppercase;
     letter-spacing: 2px;
+    flex: 1;
+}
+
+/* 任務面板收起按鈕 */
+.task-panel-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-panel-toggle:hover {
+    border-color: var(--cyan);
+    background: rgba(0, 255, 255, 0.1);
+}
+
+.task-panel-toggle .toggle-arrow {
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.task-panel-toggle:hover .toggle-arrow {
+    color: var(--cyan);
+}
+
+/* 任務面板收起狀態 */
+.task-panel.collapsed {
+    /* 40px accounts for bottom positioning (20px) + extra buffer to fully hide panel */
+    transform: translateY(calc(100% + 40px));
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* 任務面板展開按鈕 (當面板收起時顯示) */
+.task-panel-expand {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.95) 0%, rgba(10, 10, 20, 0.95) 100%);
+    border: 1px solid var(--cyan-dim);
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 899;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.task-panel-expand:hover {
+    border-color: var(--cyan);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.task-panel-expand.hidden {
+    display: none;
+}
+
+.task-panel-expand .expand-arrow {
+    color: var(--cyan);
+    font-size: 12px;
+    animation: expand-bounce 1.5s infinite ease-in-out;
+}
+
+@keyframes expand-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+}
+
+.task-panel-expand .expand-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .task-list {

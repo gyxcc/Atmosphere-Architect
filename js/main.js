@@ -128,6 +128,61 @@ function setupTaskSystem() {
     if (summaryContinueBtn) {
         summaryContinueBtn.addEventListener('click', handleSummaryContinue);
     }
+    
+    // 任務面板收起/展開按鈕事件
+    setupTaskPanelToggle();
+}
+
+// 任務面板元素快取
+let taskPanelElements = null;
+
+// 獲取任務面板元素 (快取以避免重複DOM查詢)
+function getTaskPanelElements() {
+    if (!taskPanelElements) {
+        taskPanelElements = {
+            taskPanel: document.getElementById('task-panel'),
+            toggleBtn: document.getElementById('task-panel-toggle'),
+            expandBtn: document.getElementById('task-panel-expand')
+        };
+    }
+    return taskPanelElements;
+}
+
+// 設置任務面板收起/展開功能
+function setupTaskPanelToggle() {
+    const elements = getTaskPanelElements();
+    
+    if (!elements.taskPanel || !elements.toggleBtn || !elements.expandBtn) return;
+    
+    // 點擊收起按鈕 - 收起任務面板
+    elements.toggleBtn.addEventListener('click', () => {
+        collapseTaskPanel();
+    });
+    
+    // 點擊展開按鈕 - 展開任務面板
+    elements.expandBtn.addEventListener('click', () => {
+        expandTaskPanel();
+    });
+}
+
+// 收起任務面板
+function collapseTaskPanel() {
+    const elements = getTaskPanelElements();
+    
+    if (!elements.taskPanel || !elements.expandBtn) return;
+    
+    elements.taskPanel.classList.add('collapsed');
+    elements.expandBtn.classList.remove('hidden');
+}
+
+// 展開任務面板
+function expandTaskPanel() {
+    const elements = getTaskPanelElements();
+    
+    if (!elements.taskPanel || !elements.expandBtn) return;
+    
+    elements.taskPanel.classList.remove('collapsed');
+    elements.expandBtn.classList.add('hidden');
 }
 
 // 開始任務檢查
@@ -397,3 +452,5 @@ window.createDataPanel = createDataPanel;
 window.updateTaskPanel = updateTaskPanel;
 window.startTaskChecking = startTaskChecking;
 window.showSummaryModal = showSummaryModal;
+window.collapseTaskPanel = collapseTaskPanel;
+window.expandTaskPanel = expandTaskPanel;

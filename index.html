@@ -525,6 +525,9 @@
         <div class="task-panel-header">
             <span class="task-panel-icon">📋</span>
             <span class="task-panel-title">階段任務</span>
+            <button id="task-panel-toggle" class="task-panel-toggle" title="收起任務面板">
+                <span class="toggle-arrow">▼</span>
+            </button>
         </div>
         <div id="task-list" class="task-list">
             <!-- 任務項會動態生成 -->
@@ -540,6 +543,12 @@
             <span class="btn-arrow">→</span>
         </button>
     </div>
+
+    <!-- 任務面板展開按鈕 (當面板收起時顯示) -->
+    <button id="task-panel-expand" class="task-panel-expand hidden" title="展開任務面板">
+        <span class="expand-arrow">▲</span>
+        <span class="expand-label">📋 任務</span>
+    </button>
 
     <!-- 階段總結彈窗 -->
     <div id="summary-modal" class="summary-modal">
