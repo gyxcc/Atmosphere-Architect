@@ -35,8 +35,108 @@ const ClimateState = {
         ecoScore: 100,          // 環境健康度
         tools: [],              // 已部署的工具
         submitted: false        // 是否已提交方案
+    },
+    
+    // 任務系統
+    tasks: {
+        global: {
+            completed: [],      // 已完成的任務ID
+            allCompleted: false // 是否全部完成
+        },
+        regional: {
+            completed: [],
+            allCompleted: false
+        },
+        disaster: {
+            completed: [],
+            allCompleted: false
+        }
     }
 };
+
+// 任務定義
+const ModuleTasks = {
+    global: {
+        name: '全球氣候實驗室',
+        tasks: [
+            { id: 'solar_adjust', text: '調整太陽輻射強度至 120% 以上', check: () => ClimateState.global.solarRadiation >= 120 },
+            { id: 'rotation_adjust', text: '調整地球自轉速度至 60 以上', check: () => ClimateState.global.rotationSpeed >= 60 },
+            { id: 'hadley_active', text: '激活哈德里環流', check: () => ClimateState.global.rotationSpeed >= 20 && ClimateState.global.solarRadiation >= 50 }
+        ],
+        summary: {
+            title: '全球氣候原理',
+            content: `
+                <p><strong>🌞 太陽輻射</strong>是地球氣候系統的能量來源，加熱赤道形成<strong>低氣壓</strong>（空氣上升），極地冷卻形成<strong>高氣壓</strong>（空氣下沉）。</p>
+                <p><strong>🌍 地球自轉</strong>產生科氏力，使風向發生偏轉，形成穩定的三圈環流系統：哈德里環流、費雷爾環流、極地環流。</p>
+                <p><strong>💨 大氣環流</strong>決定了全球氣候帶的分布，影響降水和氣溫模式。</p>
+            `
+        },
+        nextModule: 'regional'
+    },
+    regional: {
+        name: '中國季風系統',
+        tasks: [
+            { id: 'summer_monsoon', text: '調整月份觀察夏季季風（6-8月）', check: () => ClimateState.regional.month >= 6 && ClimateState.regional.month <= 8 },
+            { id: 'winter_monsoon', text: '調整月份觀察冬季季風（12月或1-2月）', check: () => ClimateState.regional.month === 12 || ClimateState.regional.month === 1 || ClimateState.regional.month === 2 },
+            { id: 'plateau_effect', text: '開啟青藏高原觀察地形影響', check: () => ClimateState.regional.plateauActive === true }
+        ],
+        summary: {
+            title: '季風原理',
+            content: `
+                <p><strong>🌡️ 海陸熱力差異</strong>：陸地比熱容小，升溫快降溫也快；海洋比熱容大，溫度穩定。</p>
+                <p><strong>❄️ 冬季季風</strong>：陸地冷 → 高壓，風從陸地吹向海洋（西北風，乾燥）</p>
+                <p><strong>☀️ 夏季季風</strong>：陸地熱 → 低壓，風從海洋吹向陸地（東南風，濕潤）</p>
+                <p><strong>🏔️ 青藏高原</strong>阻擋季風，使氣流抬升，在迎風坡產生降水。</p>
+            `
+        },
+        nextModule: 'disaster'
+    },
+    disaster: {
+        name: '災害應對工程',
+        tasks: [
+            { id: 'deploy_tool', text: '部署至少一個應對工具', check: () => ClimateState.disaster.tools.length >= 1 },
+            { id: 'moisture_goal', text: '將土壤濕度提升至 60% 以上', check: () => ClimateState.disaster.moisture >= 60 },
+            { id: 'eco_balance', text: '保持環境健康度在 50 以上', check: () => ClimateState.disaster.ecoScore >= 50 }
+        ],
+        summary: {
+            title: '災害應對策略',
+            content: `
+                <p><strong>💧 水資源管理</strong>：南水北調等跨區域調水工程可有效緩解旱情，但成本高昂。</p>
+                <p><strong>🌱 生態工程</strong>：退耕還林、節水灌溉等措施可長期改善生態環境。</p>
+                <p><strong>⚖️ 權衡與決策</strong>：應對災害需要平衡經濟成本、效果和環境影響。</p>
+                <p><strong>🎯 恭喜完成</strong>：你已經學習了全球氣候、區域季風和災害應對的基本知識！</p>
+            `
+        },
+        nextModule: null // 最後一個模塊
+    }
+};
+
+// 檢查模塊任務完成狀態
+function checkModuleTasks(moduleName) {
+    const moduleTasks = ModuleTasks[moduleName];
+    if (!moduleTasks) return { completed: [], total: 0, allCompleted: false };
+    
+    // 使用 Set 獲取已記錄的完成任務 (O(1) 查找)
+    const previouslyCompleted = new Set(ClimateState.tasks[moduleName].completed || []);
+    
+    // 檢查當前是否有任務完成
+    moduleTasks.tasks.forEach(task => {
+        if (task.check()) {
+            previouslyCompleted.add(task.id);
+        }
+    });
+    
+    // 轉換回數組並更新完成狀態（任務一旦完成就保持完成）
+    const completed = Array.from(previouslyCompleted);
+    ClimateState.tasks[moduleName].completed = completed;
+    ClimateState.tasks[moduleName].allCompleted = completed.length === moduleTasks.tasks.length;
+    
+    return {
+        completed,
+        total: moduleTasks.tasks.length,
+        allCompleted: ClimateState.tasks[moduleName].allCompleted
+    };
+}
 
 // 保存狀態到 LocalStorage
 function saveState() {
@@ -234,6 +334,7 @@ function calculateDisasterScore() {
 
 // 導出給其他模塊使用
 window.ClimateState = ClimateState;
+window.ModuleTasks = ModuleTasks;
 window.saveState = saveState;
 window.loadState = loadState;
 window.resetState = resetState;
@@ -242,3 +343,4 @@ window.calculateCirculationStability = calculateCirculationStability;
 window.calculateRegionalTemperatures = calculateRegionalTemperatures;
 window.applyDisasterTool = applyDisasterTool;
 window.calculateDisasterScore = calculateDisasterScore;
+window.checkModuleTasks = checkModuleTasks;

@@ -520,6 +520,43 @@
         </div>
     </div>
 
+    <!-- 任務面板 -->
+    <div id="task-panel" class="task-panel hidden">
+        <div class="task-panel-header">
+            <span class="task-panel-icon">📋</span>
+            <span class="task-panel-title">階段任務</span>
+        </div>
+        <div id="task-list" class="task-list">
+            <!-- 任務項會動態生成 -->
+        </div>
+        <div class="task-progress">
+            <div class="task-progress-bar">
+                <div id="task-progress-fill" class="task-progress-fill" style="width: 0%"></div>
+            </div>
+            <span id="task-progress-text" class="task-progress-text">0/0</span>
+        </div>
+        <button id="next-stage-btn" class="next-stage-btn hidden">
+            <span class="btn-text">下一步 NEXT</span>
+            <span class="btn-arrow">→</span>
+        </button>
+    </div>
+
+    <!-- 階段總結彈窗 -->
+    <div id="summary-modal" class="summary-modal">
+        <div class="summary-content">
+            <div class="summary-header">
+                <span class="summary-icon">🎓</span>
+                <span id="summary-title" class="summary-title">階段總結</span>
+            </div>
+            <div id="summary-body" class="summary-body">
+                <!-- 總結內容會動態生成 -->
+            </div>
+            <button id="summary-continue-btn" class="summary-continue-btn">
+                <span class="btn-text">繼續 CONTINUE</span>
+            </button>
+        </div>
+    </div>
+
     <!-- 導航欄 (啟動後顯示) -->
     <nav id="main-nav" class="hidden">
         <div class="nav-brand">ATMOSPHERE ARCHITECT</div>

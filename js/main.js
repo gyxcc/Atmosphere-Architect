@@ -2,6 +2,9 @@
    主入口 - Atmosphere Architect
    ======================================== */
 
+// 任務檢查間隔
+let taskCheckInterval = null;
+
 // DOM 加載完成後初始化
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🌍 Atmosphere Architect - 系統啟動');
@@ -11,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 設置導航事件
     setupNavigation();
+    
+    // 設置任務系統事件
+    setupTaskSystem();
     
     // 開發模式: 按鍵功能
     document.addEventListener('keydown', (e) => {
@@ -61,6 +67,9 @@ function setupNavigation() {
             
             // 初始化對應模塊 (如果有)
             initModuleIfNeeded(targetScreen);
+            
+            // 更新任務面板
+            updateTaskPanel(moduleMapping[targetScreen]);
         });
     });
 }
@@ -88,7 +97,193 @@ function initModuleIfNeeded(screenId) {
                 }
                 break;
         }
+        
+        // 獲取模塊名並啟動任務檢查
+        const moduleMapping = {
+            'global-lab-screen': 'global',
+            'regional-screen': 'regional',
+            'disaster-screen': 'disaster'
+        };
+        const moduleName = moduleMapping[screenId];
+        if (moduleName) {
+            startTaskChecking(moduleName);
+        }
     }, 150);
+}
+
+// ========================================
+//   任務系統
+// ========================================
+
+// 設置任務系統事件
+function setupTaskSystem() {
+    // 下一步按鈕事件
+    const nextStageBtn = document.getElementById('next-stage-btn');
+    if (nextStageBtn) {
+        nextStageBtn.addEventListener('click', handleNextStage);
+    }
+    
+    // 總結彈窗繼續按鈕事件
+    const summaryContinueBtn = document.getElementById('summary-continue-btn');
+    if (summaryContinueBtn) {
+        summaryContinueBtn.addEventListener('click', handleSummaryContinue);
+    }
+}
+
+// 開始任務檢查
+function startTaskChecking(moduleName) {
+    // 清除之前的檢查
+    if (taskCheckInterval) {
+        clearInterval(taskCheckInterval);
+    }
+    
+    // 顯示任務面板
+    updateTaskPanel(moduleName);
+    
+    // 每秒檢查任務完成狀態
+    taskCheckInterval = setInterval(() => {
+        updateTaskPanel(moduleName);
+    }, 1000);
+}
+
+// 更新任務面板
+function updateTaskPanel(moduleName) {
+    const taskPanel = document.getElementById('task-panel');
+    const taskList = document.getElementById('task-list');
+    const progressFill = document.getElementById('task-progress-fill');
+    const progressText = document.getElementById('task-progress-text');
+    const nextStageBtn = document.getElementById('next-stage-btn');
+    
+    if (!taskPanel || !taskList || !moduleName) return;
+    
+    const moduleTasks = ModuleTasks[moduleName];
+    if (!moduleTasks) {
+        taskPanel.classList.add('hidden');
+        return;
+    }
+    
+    // 顯示任務面板
+    taskPanel.classList.remove('hidden');
+    
+    // 檢查任務狀態
+    const status = checkModuleTasks(moduleName);
+    
+    // 生成任務列表HTML
+    let html = '';
+    moduleTasks.tasks.forEach(task => {
+        const isCompleted = status.completed.includes(task.id);
+        html += `
+            <div class="task-item ${isCompleted ? 'completed' : ''}">
+                <div class="task-check">${isCompleted ? '✓' : ''}</div>
+                <div class="task-text">${task.text}</div>
+            </div>
+        `;
+    });
+    taskList.innerHTML = html;
+    
+    // 更新進度條
+    const percentage = (status.completed.length / status.total) * 100;
+    if (progressFill) {
+        progressFill.style.width = percentage + '%';
+    }
+    if (progressText) {
+        progressText.textContent = `${status.completed.length}/${status.total}`;
+    }
+    
+    // 顯示/隱藏下一步按鈕
+    if (nextStageBtn) {
+        if (status.allCompleted) {
+            nextStageBtn.classList.remove('hidden');
+        } else {
+            nextStageBtn.classList.add('hidden');
+        }
+    }
+}
+
+// 處理點擊下一步
+function handleNextStage() {
+    const moduleName = ClimateState.currentModule;
+    const moduleTasks = ModuleTasks[moduleName];
+    
+    if (!moduleTasks) return;
+    
+    // 顯示總結彈窗
+    showSummaryModal(moduleTasks.summary.title, moduleTasks.summary.content, moduleTasks.nextModule);
+}
+
+// 顯示總結彈窗
+function showSummaryModal(title, content, nextModule) {
+    const modal = document.getElementById('summary-modal');
+    const summaryTitle = document.getElementById('summary-title');
+    const summaryBody = document.getElementById('summary-body');
+    const continueBtn = document.getElementById('summary-continue-btn');
+    
+    if (!modal) return;
+    
+    // 設置內容
+    if (summaryTitle) {
+        summaryTitle.textContent = title;
+    }
+    if (summaryBody) {
+        summaryBody.innerHTML = content;
+    }
+    
+    // 設置按鈕文本
+    if (continueBtn) {
+        if (nextModule) {
+            continueBtn.innerHTML = '<span class="btn-text">進入下一階段 NEXT STAGE</span>';
+        } else {
+            continueBtn.innerHTML = '<span class="btn-text">完成 FINISH</span>';
+        }
+    }
+    
+    // 存儲下一模塊信息
+    modal.dataset.nextModule = nextModule || '';
+    
+    // 顯示彈窗
+    modal.classList.add('visible');
+}
+
+// 處理總結彈窗繼續按鈕
+function handleSummaryContinue() {
+    const modal = document.getElementById('summary-modal');
+    if (!modal) return;
+    
+    const nextModule = modal.dataset.nextModule;
+    
+    // 隱藏彈窗
+    modal.classList.remove('visible');
+    
+    // 如果有下一模塊，切換到下一模塊
+    if (nextModule) {
+        const screenMapping = {
+            'global': 'global-lab-screen',
+            'regional': 'regional-screen',
+            'disaster': 'disaster-screen'
+        };
+        const targetScreen = screenMapping[nextModule];
+        
+        if (targetScreen) {
+            // 切換畫面
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(targetScreen).classList.add('active');
+            
+            // 更新導航按鈕
+            updateNavButtons(targetScreen);
+            
+            // 更新狀態
+            ClimateState.currentModule = nextModule;
+            saveState();
+            
+            // 初始化模塊
+            initModuleIfNeeded(targetScreen);
+            
+            // 更新任務面板
+            updateTaskPanel(nextModule);
+        }
+    }
 }
 
 // 工具函數: 數字跳動效果
@@ -199,3 +394,6 @@ window.animateValue = animateValue;
 window.createSlider = createSlider;
 window.createToggle = createToggle;
 window.createDataPanel = createDataPanel;
+window.updateTaskPanel = updateTaskPanel;
+window.startTaskChecking = startTaskChecking;
+window.showSummaryModal = showSummaryModal;
