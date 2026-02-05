@@ -21,7 +21,7 @@ const ClimateState = {
     // 模塊 2: 區域季風
     regional: {
         month: 1,               // 當前月份 1-12
-        plateauActive: true,    // 青藏高原是否存在
+        plateauActive: False,    // 青藏高原是否存在
         landTemp: 0,            // 陸地溫度 (計算值)
         seaTemp: 15,            // 海洋溫度 (計算值)
         windDirection: 'NW',    // 風向
@@ -344,3 +344,4 @@ window.calculateRegionalTemperatures = calculateRegionalTemperatures;
 window.applyDisasterTool = applyDisasterTool;
 window.calculateDisasterScore = calculateDisasterScore;
 window.checkModuleTasks = checkModuleTasks;
+
