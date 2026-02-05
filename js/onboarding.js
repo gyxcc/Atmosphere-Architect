@@ -238,12 +238,15 @@ function skipOnboarding() {
         switch (targetScreen) {
             case 'global-lab-screen':
                 if (typeof initGlobalLab === 'function') initGlobalLab();
+                if (typeof startTaskChecking === 'function') startTaskChecking('global');
                 break;
             case 'regional-screen':
                 if (typeof initRegionalModule === 'function') initRegionalModule();
+                if (typeof startTaskChecking === 'function') startTaskChecking('regional');
                 break;
             case 'disaster-screen':
                 if (typeof initDisasterModule === 'function') initDisasterModule();
+                if (typeof startTaskChecking === 'function') startTaskChecking('disaster');
                 break;
         }
     }, 150);
@@ -268,7 +271,13 @@ function transitionToModule(screenId) {
         
         // 初始化對應模塊
         if (screenId === 'global-lab-screen' && typeof initGlobalLab === 'function') {
-            setTimeout(() => initGlobalLab(), 100);
+            setTimeout(() => {
+                initGlobalLab();
+                // 啟動任務檢查
+                if (typeof startTaskChecking === 'function') {
+                    startTaskChecking('global');
+                }
+            }, 100);
         }
     }, 100);
 }
