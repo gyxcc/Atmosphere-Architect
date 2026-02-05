@@ -9,6 +9,11 @@ let disasterAnimationId;
 // 拖放狀態
 let draggedTool = null;
 let deployedTools = [];
+let dragAndDropSetup = false; // 標記是否已設置拖放事件
+let justDragged = false; // 標記是否剛剛進行了拖放操作
+
+// 常量
+const DRAG_CLICK_DEBOUNCE_MS = 100; // 拖放操作結束後防止點擊觸發的延遲時間
 
 // 工具定義
 const TOOLS = {
@@ -146,6 +151,12 @@ function resetDisasterState() {
 
 // 設置拖放功能
 function setupDragAndDrop() {
+    // 防止重複設置事件監聽器
+    if (dragAndDropSetup) {
+        return;
+    }
+    dragAndDropSetup = true;
+    
     const toolItems = document.querySelectorAll('.tool-item');
     const mapContainer = document.querySelector('.disaster-map-container');
     
@@ -154,7 +165,13 @@ function setupDragAndDrop() {
         item.addEventListener('dragend', handleDragEnd);
         
         // 點擊部署（移動端備用）
-        item.addEventListener('click', () => handleToolClick(item.dataset.tool));
+        item.addEventListener('click', (e) => {
+            // 如果剛剛進行了拖放操作，不觸發點擊
+            if (justDragged) {
+                return;
+            }
+            handleToolClick(item.dataset.tool);
+        });
     });
     
     if (disasterCanvas) {
@@ -168,6 +185,7 @@ function setupDragAndDrop() {
 function handleDragStart(e) {
     draggedTool = e.target.dataset.tool;
     e.target.classList.add('dragging');
+    justDragged = true;
     document.querySelector('.disaster-map-container')?.classList.add('dragging');
 }
 
@@ -176,6 +194,11 @@ function handleDragEnd(e) {
     e.target.classList.remove('dragging');
     document.querySelector('.disaster-map-container')?.classList.remove('dragging');
     draggedTool = null;
+    
+    // 延遲重置標記，避免 click 事件在 dragend 後觸發
+    setTimeout(() => {
+        justDragged = false;
+    }, DRAG_CLICK_DEBOUNCE_MS);
 }
 
 // 拖動經過
